@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>واجبك الذكي</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="max-w-xl mx-auto p-6 mt-10 bg-white shadow-lg rounded-2xl">
+    <h1 class="text-2xl font-bold text-center text-blue-600 mb-4">واجبك الذكي 🤖</h1>
+    <p class="text-gray-600 text-sm mb-4 text-center">أدخل سؤالك وسنحاول مساعدتك باستخدام الذكاء الاصطناعي</p>
+
+    <textarea id="questionInput" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4" placeholder="اكتب سؤالك هنا..."></textarea>
+
+    <button onclick="solveQuestion()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold">حل السؤال</button>
+
+    <div id="answerOutput" class="mt-6 p-4 bg-gray-50 border border-gray-300 rounded-lg text-gray-800"></div>
+
+    <p class="text-xs text-center text-gray-400 mt-6">هذه الأداة تعليمية فقط، وتساعدك على الفهم وليس الغش ❗<br>hassan taleb</p>
+  </div>
+
+  <script>
+    async function solveQuestion() {
+      const question = document.getElementById('questionInput').value;
+      const output = document.getElementById('answerOutput');
+      output.innerHTML = 'جاري التفكير... 🤔';
+
+      try {
+        const response = await fetch('/.netlify/functions/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await response.json();
+
+        if (data.answer) {
+          output.innerHTML = data.answer;
+        } else {
+          output.innerHTML = 'لم يتمكن الذكاء الاصطناعي من توليد إجابة، حاول مرة أخرى.';
+        }
+      } catch (error) {
+        output.innerHTML = 'حدث خطأ أثناء الاتصال بالخادم 😓';
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
